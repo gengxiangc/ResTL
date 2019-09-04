@@ -3,6 +3,8 @@
 Created on 2019
 @author: Tangmei cgx@nuaa.edu.dn
 Hypothesis transfer learning based on fuzzy residual
+
+
 """
 import numpy as np
 import matplotlib
