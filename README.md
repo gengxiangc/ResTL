@@ -1,5 +1,5 @@
 # ResTL: 
-Python implementation of [hypothesis transfer learning based on fuzzy residual](https://www.baidu.com) for regression transfer. 
+Python implementation of [Transfer learning based on fuzzy residual](https://www.baidu.com) for regression transfer. 
 ![](images/Figure_1.png)
 
 ## Getting Started
