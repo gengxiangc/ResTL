@@ -159,16 +159,16 @@ def model(X_source, X_target, Y_source, Y_target, X_test
         centers, delta = gene_ante_deter(X_source, n_cluster)
     delta = delta*width  # change the rules width 
        
-    # compute x_p: as euqation(11) in the paper
-    G_s   , _  = get_x_p(X_source, centers, delta)
-    G_t   , W  = get_x_p(X_target, centers, delta) # W as equation(27)
+    # compute x_p: as euqation(3) in the paper
+    X_p   , _  = get_x_p(X_source, centers, delta) # X_p is  
+    G_t   , W  = get_x_p(X_target, centers, delta) # W as equation(20)
     G_test, _  = get_x_p(X_test,   centers, delta)
     
     # compute error of target data E
     if basemodel == 'TSK':       
-        # compute consequent parametsrs by LS as equation(13) in the paper
-        G_s1 = np.dot(G_s.T, G_s)
-        Ps = np.linalg.pinv(G_s1 + C * np.eye(G_s1.shape[0])).dot(G_s.T).dot(Y_source)
+        # compute consequent parametsrs by LS as equation(5) in the paper
+        X_p1 = np.dot(X_p.T, X_p)
+        Ps = np.linalg.pinv(X_p1 + C * np.eye(X_p1.shape[0])).dot(X_p.T).dot(Y_source)
         
         # compute generalization errors of source model on target data
         E = Y_target - G_t.dot(Ps)    
@@ -189,7 +189,7 @@ def model(X_source, X_target, Y_source, Y_target, X_test
      
      # compute the bias Z by residual defuzzification (RD)
     if residual == 'RD':   
-        # equation(30) 
+        # equation(23) 
         Ws = np.sum(W, axis=0)
         W = W/Ws
         Z = W*E
@@ -200,7 +200,7 @@ def model(X_source, X_target, Y_source, Y_target, X_test
     for k in range(n_cluster):
         Pe[k*(d+1)+d] = Z[k]
     residual_test   = G_test.dot(Pe)
-    residual_source = G_s.dot(Pe)
+    residual_source = X_p.dot(Pe)
     
     # cumpute the Y_output
     if fit_with_target == False:
@@ -216,7 +216,7 @@ def model(X_source, X_target, Y_source, Y_target, X_test
               param_grid={"alpha": [1e0, 0.1, 1e-2, 1e-3],
                           "gamma": np.logspace(-2, 2, 5)})
         if basemodel == 'TSK': 
-            Ys_sourcemodel = G_s.dot(Ps)
+            Ys_sourcemodel = X_p.dot(Ps)
             Ys_new = Ys_sourcemodel + residual_source
         else: # the basemodel from sklearn
             Ys_sourcemodel = basemodel.predict(X_source)
