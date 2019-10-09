@@ -160,18 +160,18 @@ def model(X_source, X_target, Y_source, Y_target, X_test
     delta = delta*width  # change the rules width 
        
     # compute x_p: as euqation(3) in the paper
-    X_p   , _  = get_x_p(X_source, centers, delta) # X_p is  
-    G_t   , W  = get_x_p(X_target, centers, delta) # W as equation(20)
-    G_test, _  = get_x_p(X_test,   centers, delta)
+    X_p_s   , _  = get_x_p(X_source, centers, delta) # X_p_s as euqation(3)  
+    X_p_t   , W  = get_x_p(X_target, centers, delta) # W as equation(20)
+    X_p_test, _  = get_x_p(X_test,   centers, delta)
     
     # compute error of target data E
     if basemodel == 'TSK':       
         # compute consequent parametsrs by LS as equation(5) in the paper
-        X_p1 = np.dot(X_p.T, X_p)
-        Ps = np.linalg.pinv(X_p1 + C * np.eye(X_p1.shape[0])).dot(X_p.T).dot(Y_source)
+        X_p_s1 = np.dot(X_p_s.T, X_p_s)
+        Ps = np.linalg.pinv(X_p_s1 + C * np.eye(X_p_s1.shape[0])).dot(X_p_s.T).dot(Y_source)
         
         # compute generalization errors of source model on target data
-        E = Y_target - G_t.dot(Ps)    
+        E = Y_target - X_p_t.dot(Ps)    
     else: # the basemodel from sklearn
         basemodel.fit(X_source, Y_source) 
         
@@ -180,7 +180,7 @@ def model(X_source, X_target, Y_source, Y_target, X_test
     
     # compute the bias Z by least squre (LS)
     if residual == 'LS':
-        # equation(26)
+        # equation(19)
         W_1 = np.dot(W.T, W)
         C2 = 1e-1       
         #  For those rules with no target data, the corresponding z_k will be controlled close to 0 
@@ -199,13 +199,13 @@ def model(X_source, X_target, Y_source, Y_target, X_test
     Pe = np.zeros((n_cluster*(d+1)))[:, np.newaxis]
     for k in range(n_cluster):
         Pe[k*(d+1)+d] = Z[k]
-    residual_test   = G_test.dot(Pe)
-    residual_source = X_p.dot(Pe)
+    residual_test   = X_p_test.dot(Pe)
+    residual_source = X_p_s.dot(Pe)
     
     # cumpute the Y_output
     if fit_with_target == False:
         if basemodel == 'TSK': 
-            Ytest_sourcemodel = G_test.dot(Ps)
+            Ytest_sourcemodel = X_p_test.dot(Ps)
             Y_output = Ytest_sourcemodel + residual_test
         else: # the basemodel from sklearn
             Ytest_sourcemodel = basemodel.predict(X_test)
@@ -216,7 +216,7 @@ def model(X_source, X_target, Y_source, Y_target, X_test
               param_grid={"alpha": [1e0, 0.1, 1e-2, 1e-3],
                           "gamma": np.logspace(-2, 2, 5)})
         if basemodel == 'TSK': 
-            Ys_sourcemodel = X_p.dot(Ps)
+            Ys_sourcemodel = X_p_s.dot(Ps)
             Ys_new = Ys_sourcemodel + residual_source
         else: # the basemodel from sklearn
             Ys_sourcemodel = basemodel.predict(X_source)
