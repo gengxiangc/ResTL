@@ -1,5 +1,5 @@
 # ResTL: 
-Python implementation of [Transfer learning based on fuzzy residual](https://www.baidu.com) for regression transfer. 
+Python implementation of [ Transfer Learning Under Conditional Shift Based on Fuzzy Residual](https://ieeexplore.ieee.org/document/9097377) for regression transfer. 
 ![](images/Figure_1.png)
 
 ## Getting Started
@@ -18,11 +18,11 @@ pip install scikit-fuzzy
 If you use this code for your research, please cite our papers.
 ```
 @inproceedings{
-    title={Hypothesis transfer learning based on fuzzy residual},
-    author={Chen gengxiang},
-    booktitle={Arxiv},
+    title={ Transfer Learning Under Conditional Shift Based on Fuzzy Residual},
+    author={G. Chen, Y. Li, X. Liu},
+    booktitle={IEEE Transactions on Cybernetics},
     year={2019},
-    url={https://www.baidu.com},
+    url={(https://ieeexplore.ieee.org/document/9097377},
 }
 ```
 ## Thanks
